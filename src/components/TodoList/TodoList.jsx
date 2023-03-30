@@ -25,27 +25,28 @@ const Input = ({ setInput }) => {
       className="record-input"
       placeholder="Ведите задачу!"
       type="text"
-      onChange={(e) => setInput(e.target.value)}
+      onInput={(e) => setInput(e.target.value)}
     />
   );
 };
-const Button = ({ addTask }) => {
+const Button = ({ addRecord }) => {
   return (
-    <button onClick={() => addTask()} className="record-btn-add">
+    <button onClick={() => addRecord()} className="record-btn-add">
       Добавить!
     </button>
   );
 };
-const List = ({ recordList, setRecordList, deleteRecord }) => {
-  console.log(recordList);
+const List = ({ recordList, deleteRecord }) => {
   let newRecordlist = [];
   if (recordList !== []) {
     newRecordlist = recordList.map((record) => {
       return (
         <div className="record" key={record.time}>
-          <div className="time">{record.time}</div>
+          <div className="time">{record.time}.00</div>
           <div className="notice">{record.notice}</div>
-          <button className="delete">x</button>
+          <button className="delete" onClick={() => deleteRecord(record.time)}>
+            x
+          </button>
         </div>
       );
     });
@@ -55,30 +56,50 @@ const List = ({ recordList, setRecordList, deleteRecord }) => {
 };
 
 function TodoListFunc(props) {
-  const [select, setSelect] = useState("");
+  const [select, setSelect] = useState(6);
   const [inputValue, setInputValue] = useState("");
   const [recordList, setRecordList] = useState([]);
 
-  function addTask() {
-    if (inputValue !== "" && select !== "") {
+  function addRecord() {
+    const currentTime = recordList.find((record) => record.time === select);
+    if (inputValue !== "" && currentTime === undefined) {
       setRecordList([...recordList, { time: select, notice: inputValue }]);
+      // setLocalStorage(select, inputValue);
+    }
+    if (currentTime !== undefined) {
+      const newRecordList = recordList
+        .map((record) => {
+          if (record.time === select) {
+            return { time: record.time, notice: inputValue };
+          }
+          return record;
+        })
+        .sort((a, b) => a.time - b.time);
+      setRecordList(newRecordList);
     }
     return;
   }
+
   function deleteRecord(time) {
-    recordList.forEach((record, i) => {
-      if (record.time == time) {
-        const startArr = recordList.slice(0, i - 1);
-        const endArr = recordList.slice(i + 1);
-        setRecordList(...startArr, ...endArr);
-      }
-    });
+    const newRecordList = recordList.filter((record) => record.time !== time);
+    setRecordList(newRecordList);
   }
+
+  // function setLocalStorage(key, title) {
+  //   localStorage.setItem(`record_${key}`, JSON.stringify(title));
+  // }
+  // function getLocalStorage(key){
+  //   const record = JSON.parse(localStorage.getItem(`record_${key}`));
+  //   return record;
+  // }
+
   return (
     <div className="todo-list">
-      <Select value={select} setSelect={setSelect} />
-      <Input value={inputValue} setInput={setInputValue} />
-      <Button addTask={addTask} />
+      <div className="todo-list__wrapper">
+        <Select value={select} setSelect={setSelect} />
+        <Input value={inputValue} setInput={setInputValue} />
+        <Button addRecord={addRecord} />
+      </div>
       <List
         recordList={recordList}
         setRecordList={setRecordList}
