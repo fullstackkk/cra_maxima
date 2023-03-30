@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/cra_maxima/static/css/main.e0dce9b3.css",
+    "main.js": "/cra_maxima/static/js/main.b3558feb.js",
+    "index.html": "/cra_maxima/index.html",
+    "main.e0dce9b3.css.map": "/cra_maxima/static/css/main.e0dce9b3.css.map",
+    "main.b3558feb.js.map": "/cra_maxima/static/js/main.b3558feb.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e0dce9b3.css",
+    "static/js/main.b3558feb.js"
+  ]
+}
