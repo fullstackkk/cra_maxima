@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/cra_maxima/static/css/main.cacd04db.css",
-    "main.js": "/cra_maxima/static/js/main.cb6485fc.js",
+    "main.js": "/cra_maxima/static/js/main.34e8a6e1.js",
     "index.html": "/cra_maxima/index.html",
     "main.cacd04db.css.map": "/cra_maxima/static/css/main.cacd04db.css.map",
-    "main.cb6485fc.js.map": "/cra_maxima/static/js/main.cb6485fc.js.map"
+    "main.34e8a6e1.js.map": "/cra_maxima/static/js/main.34e8a6e1.js.map"
   },
   "entrypoints": [
     "static/css/main.cacd04db.css",
-    "static/js/main.cb6485fc.js"
+    "static/js/main.34e8a6e1.js"
   ]
 }
