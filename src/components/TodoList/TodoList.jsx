@@ -1,6 +1,88 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { timeList } from "./utils";
 import "./todoList.css";
+
+function TodoListFunc(props) {
+  const [select, setSelect] = useState(6);
+  const [inputValue, setInputValue] = useState("");
+  const [recordList, setRecordList] = useState([]);
+
+  function addRecord() {
+    const currentTime = recordList.find((record) => record.time === select);
+    if (inputValue !== "" && currentTime === undefined) {
+      setRecordList([...recordList, { time: select, notice: inputValue }]);
+      setLocalStorage(select, inputValue);
+    }
+    if (currentTime !== undefined) {
+      const newRecordList = recordList
+        .map((record) => {
+          if (record.time === select) {
+            return { time: record.time, notice: inputValue };
+          }
+          return record;
+        })
+        .sort((a, b) => a.time - b.time);
+      setRecordList(newRecordList);
+      setLocalStorage(select, inputValue);
+    }
+    return;
+  }
+
+  useEffect(() => {
+    initialRecordList();
+  }, []);
+
+  const result = useMemo(() => {
+    return recordList.filter((record) => record.time === select);
+  });
+
+  const result2 = useCallback(() => {
+    return recordList.filter((record) => record.time === select);
+  });
+
+  function deleteRecord(time) {
+    const newRecordList = recordList.filter((record) => record.time !== time);
+    setRecordList(newRecordList);
+    deleteLocalStorage(time);
+  }
+
+  function setLocalStorage(key, title) {
+    localStorage.setItem(`record_${key}`, JSON.stringify(title));
+  }
+  function getLocalStorage(key) {
+    const record = JSON.parse(localStorage.getItem(`record_${key}`));
+    return record;
+  }
+  function deleteLocalStorage(key) {
+    localStorage.removeItem(`record_${key}`);
+  }
+
+  function initialRecordList() {
+    const newRecordList = [];
+    for (let i = 0; i < timeList.length; i++) {
+      const localValue = getLocalStorage(timeList[i].time);
+      if (localValue !== null) {
+        newRecordList.push({ time: timeList[i].time, notice: localValue });
+      }
+    }
+    setRecordList(newRecordList);
+  }
+  return (
+    <div className="todo-list">
+      <div className="todo-list__wrapper">
+        <Select value={select} setSelect={setSelect} />
+        <Input value={inputValue} setInput={setInputValue} />
+        <Button addRecord={addRecord} />
+      </div>
+
+      <List
+        recordList={recordList}
+        setRecordList={setRecordList}
+        deleteRecord={deleteRecord}
+      />
+    </div>
+  );
+}
 
 const Select = ({ value, setSelect }) => {
   return (
@@ -54,59 +136,5 @@ const List = ({ recordList, deleteRecord }) => {
 
   return <div className="list">{newRecordlist} </div>;
 };
-
-function TodoListFunc(props) {
-  const [select, setSelect] = useState(6);
-  const [inputValue, setInputValue] = useState("");
-  const [recordList, setRecordList] = useState([]);
-
-  function addRecord() {
-    const currentTime = recordList.find((record) => record.time === select);
-    if (inputValue !== "" && currentTime === undefined) {
-      setRecordList([...recordList, { time: select, notice: inputValue }]);
-      // setLocalStorage(select, inputValue);
-    }
-    if (currentTime !== undefined) {
-      const newRecordList = recordList
-        .map((record) => {
-          if (record.time === select) {
-            return { time: record.time, notice: inputValue };
-          }
-          return record;
-        })
-        .sort((a, b) => a.time - b.time);
-      setRecordList(newRecordList);
-    }
-    return;
-  }
-
-  function deleteRecord(time) {
-    const newRecordList = recordList.filter((record) => record.time !== time);
-    setRecordList(newRecordList);
-  }
-
-  // function setLocalStorage(key, title) {
-  //   localStorage.setItem(`record_${key}`, JSON.stringify(title));
-  // }
-  // function getLocalStorage(key){
-  //   const record = JSON.parse(localStorage.getItem(`record_${key}`));
-  //   return record;
-  // }
-
-  return (
-    <div className="todo-list">
-      <div className="todo-list__wrapper">
-        <Select value={select} setSelect={setSelect} />
-        <Input value={inputValue} setInput={setInputValue} />
-        <Button addRecord={addRecord} />
-      </div>
-      <List
-        recordList={recordList}
-        setRecordList={setRecordList}
-        deleteRecord={deleteRecord}
-      />
-    </div>
-  );
-}
 
 export default TodoListFunc;
